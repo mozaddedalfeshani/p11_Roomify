@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"; // Add this import
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import Signup from "../pages/Signup";
+import PrivateProvider from "../provider/PrivateProvider";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
       },
       {
         path: "mybookings",
-        element: <h1>mybookings</h1>,
+        element: (
+          <PrivateProvider>
+            <h2>Yes...</h2>
+          </PrivateProvider>
+        ),
       },
       {
         path: "/login",

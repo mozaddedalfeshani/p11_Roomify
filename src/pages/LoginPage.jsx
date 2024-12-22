@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 
 const LoginPage = () => {
   const { googleSignIn, loading } = useContext(AuthContext);
 
+  /////////////
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+  console.log("Redirected from:", from);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginButtonState, setLoginButtonState] = useState(false);
+  const [redirectTo, setRedirectTo] = useState(null);
 
   useEffect(() => {
     setLoginButtonState(email.length > 4 && password.length > 5);
@@ -20,11 +26,16 @@ const LoginPage = () => {
     console.log("Login attempted with email:", email);
   };
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
     // Removed Google sign-in logic
     console.log("Google sign-in attempted");
-    googleSignIn();
+    await googleSignIn();
+    setRedirectTo(from);
   };
+
+  if (redirectTo) {
+    return <Navigate to={redirectTo} />;
+  }
 
   if (loading) {
     return (

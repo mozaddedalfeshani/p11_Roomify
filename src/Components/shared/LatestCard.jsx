@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const LatestCard = ({ visaCard }) => {
-  console.log(visaCard);
   return (
     <div className="card bg-base-100 max-w-96  shadow-xl">
       <figure>
