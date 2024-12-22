@@ -3,6 +3,7 @@ import React from "react";
 import "leaflet/dist/leaflet.css";
 import CoverflowSlider from "../Components/Home/CoverflowSlider";
 import Map from "../Components/Home/Map";
+import FeaturedRoom from "../Components/Home/FeaturedRoom";
 const HomePage = () => {
   return (
     <div>
@@ -17,6 +18,7 @@ const HomePage = () => {
       </div>
 
       {/* Fetured Rooms */}
+      <FeaturedRoom />
     </div>
   );
 };
