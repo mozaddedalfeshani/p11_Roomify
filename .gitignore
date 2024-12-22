@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 .env.local
 .env
+
+# Firebase
+src/firebase/firebase.init.js

@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../provider/AuthProvider";
 
 const LoginPage = () => {
+  const { googleSignIn, loading } = useContext(AuthContext);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [loginButtonState, setLoginButtonState] = useState(false);
 
   useEffect(() => {
@@ -21,6 +23,7 @@ const LoginPage = () => {
   const handleGoogleSignIn = () => {
     // Removed Google sign-in logic
     console.log("Google sign-in attempted");
+    googleSignIn();
   };
 
   if (loading) {
