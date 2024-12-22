@@ -1,11 +1,8 @@
-import { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../../providers/AuthProvider";
-import UserIcon from "../common/UserIcon";
 import { FaSun, FaMoon } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const NavBar = () => {
-  const { user, signOutUser } = useContext(AuthContext);
   const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
@@ -26,49 +23,26 @@ const NavBar = () => {
       <Link to="/">Home</Link>
     </li>,
     <li
-      key="allvisas"
+      key="rooms"
       className={`font-roboto font-medium ${
         theme === "dark" ? "text-white" : "text-black"
       }`}>
-      <Link to="/allvisas">All Visas</Link>
+      <Link to="/rooms">Rooms</Link>
     </li>,
     <li
-      key="addVisa"
+      key="myBookings"
       className={`font-roboto font-medium ${
         theme === "dark" ? "text-white" : "text-black"
       }`}>
-      <Link to="/addVisa">Add Visa</Link>
+      <Link to="/mybookings">My Bookings</Link>
     </li>,
-    <li
-      key="myAddedVisa"
-      className={`font-roboto font-medium ${
-        theme === "dark" ? "text-white" : "text-black"
-      }`}>
-      <Link to="/myAddedVisa">My Added Visa</Link>
-    </li>,
-    <li
-      key="myVisaApplication"
-      className={`font-roboto font-medium ${
-        theme === "dark" ? "text-white" : "text-black"
-      }`}>
-      <Link to="/myVisaApplication">My Visa Application</Link>
-    </li>,
-    user && (
-      <li
-        key="profilePage"
-        className={`font-roboto font-medium ${
-          theme === "dark" ? "text-white" : "text-black"
-        }`}>
-        <Link to="/profilePage">Profile</Link>
-      </li>
-    ),
   ];
 
   return (
     <div>
       <div className="navbar bg-base-100 shadow p-3">
-        <div className="block md:hidden ">
-          <div className="dropdown lg:hidden">
+        <div className="navbar-start">
+          <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -80,38 +54,34 @@ const NavBar = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
+                  d="M4 6h16M4 12h8m-8 6h16" />
               </svg>
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[999] mt-3 w-52 p-2 shadow">
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
               {items}
+              <li
+                key="auth"
+                className={`font-roboto font-medium ${
+                  theme === "dark" ? "text-white" : "text-black"
+                }`}>
+                <Link to="/login">Login/Register</Link>
+              </li>
             </ul>
           </div>
-        </div>
-        <div className="navbar-start">
-          <Link to="/" className="btn btn-ghost text-xl">
-            VisaEase
-          </Link>
+          <Link to="/" className="btn btn-ghost text-xl">VisaEase</Link>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">{items}</ul>
+          <ul className="menu menu-horizontal px-1">
+            {items}
+          </ul>
         </div>
         <div className="navbar-end">
           <button onClick={toggleTheme} className="btn btn-ghost rounded-full">
             {theme === "dark" ? <FaSun /> : <FaMoon />}
           </button>
-          {user ? (
-            <button onClick={signOutUser} className="btn btn-ghost">
-              <UserIcon user={user} />
-            </button>
-          ) : (
-            <Link to="/authPage" className="btn">
-              Login
-            </Link>
-          )}
+          <Link to="/login" className="btn">Login/Register</Link>
         </div>
       </div>
     </div>
