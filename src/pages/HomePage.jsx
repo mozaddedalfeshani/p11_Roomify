@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import CoverflowSlider from "../Components/Home/CoverflowSlider";
 import Map from "../Components/Home/Map";
 import FeaturedRoom from "../Components/Home/FeaturedRoom";
+import WhyChooseUs from "../Components/Home/WhyChooseUs";
 const HomePage = () => {
   return (
     <div>
@@ -19,6 +20,8 @@ const HomePage = () => {
 
       {/* Fetured Rooms */}
       <FeaturedRoom />
+      {/* why choose us */}
+      <WhyChooseUs />
     </div>
   );
 };
