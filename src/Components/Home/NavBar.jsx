@@ -1,14 +1,18 @@
 import { FaSun, FaMoon } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../provider/AuthProvider";
+import UserIcon from "../shared/UserIcon";
 
 const NavBar = () => {
+  const { user } = useContext(AuthContext);
   const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
+  const signOutUser = () => {};
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
@@ -54,7 +58,8 @@ const NavBar = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16" />
+                  d="M4 6h16M4 12h8m-8 6h16"
+                />
               </svg>
             </div>
             <ul
@@ -70,18 +75,26 @@ const NavBar = () => {
               </li>
             </ul>
           </div>
-          <Link to="/" className="btn btn-ghost text-xl">VisaEase</Link>
+          <Link to="/" className="btn btn-ghost text-xl">
+            Roomify
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            {items}
-          </ul>
+          <ul className="menu menu-horizontal px-1">{items}</ul>
         </div>
         <div className="navbar-end">
           <button onClick={toggleTheme} className="btn btn-ghost rounded-full">
             {theme === "dark" ? <FaSun /> : <FaMoon />}
           </button>
-          <Link to="/login" className="btn">Login/Register</Link>
+          {user ? (
+            <button onClick={signOutUser} className="btn btn-ghost">
+              <UserIcon user={user} />
+            </button>
+          ) : (
+            <Link to="/authPage" className="btn">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </div>
