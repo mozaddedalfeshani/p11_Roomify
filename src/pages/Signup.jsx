@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { motion } from "framer-motion";
 
 const Signup = () => {
   const [password, setPassword] = useState("");
@@ -13,6 +14,7 @@ const Signup = () => {
     phoneNumber: "",
   });
   const [isFormValid, setIsFormValid] = useState(false);
+  const [borderColor, setBorderColor] = useState("rgb(0, 0, 0)");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,6 +23,16 @@ const Signup = () => {
     );
     setIsFormValid(allFieldsFilled && !passwordError);
   }, [formFields, passwordError]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      setBorderColor(`rgb(${r}, ${g}, ${b})`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,7 +60,9 @@ const Signup = () => {
 
   return (
     <div className="flex items-center justify-center p-4 sm:p-8">
-      <div className="card card-bordered shadow-sm shadow-indigo-400 rounded-lg p-4 sm:p-8 w-full max-w-md">
+      <div
+        className="card card-bordered shadow-sm shadow-indigo-400 rounded-lg p-4 sm:p-8 w-full max-w-md"
+        style={{ borderColor: borderColor }}>
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <div className="bg-transparent text-white w-12 h-12 flex items-center justify-center rounded-full">
@@ -57,7 +71,14 @@ const Signup = () => {
         </div>
 
         {/* Heading */}
-        <h2 className="text-2xl font-bold text-center mb-2">Sign up</h2>
+        <motion.h2
+          className="text-2xl font-bold text-center mb-2"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Sign up
+        </motion.h2>
         <p className="text-sm text-gray-600 text-center mb-6">
           Enter your details below to create your account and get started.
         </p>
