@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
+  signOut,
 } from "firebase/auth";
 import app from "../firebase/firebase.init";
 
@@ -46,12 +47,21 @@ const AuthProvider = ({ children }) => {
   };
 
   //
+  const LogOut = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (error) {
+      console.error("Error during sign out:", error); // Log the error
+    }
+  };
 
   const data = {
     user,
     setUser,
     googleSignIn,
     loading,
+    LogOut, // Ensure LogOut is added to the context data
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

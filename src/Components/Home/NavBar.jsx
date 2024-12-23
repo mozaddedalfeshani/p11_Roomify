@@ -5,14 +5,20 @@ import { AuthContext } from "../../provider/AuthProvider";
 import UserIcon from "../shared/UserIcon";
 
 const NavBar = () => {
-  const { user } = useContext(AuthContext);
+  const { user, LogOut } = useContext(AuthContext);
   const [theme, setTheme] = useState("dark");
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
-  const signOutUser = () => {};
+  const signOutUser = async () => {
+    try {
+      await LogOut();
+    } catch (error) {
+      console.error("Error during sign out:", error); // Log the error
+    }
+  };
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
@@ -87,11 +93,11 @@ const NavBar = () => {
             {theme === "dark" ? <FaSun /> : <FaMoon />}
           </button>
           {user ? (
-            <button onClick={signOutUser} className="btn btn-ghost">
+            <div className="btn btn-ghost">
               <UserIcon user={user} />
-            </button>
+            </div>
           ) : (
-            <Link to="/authPage" className="btn">
+            <Link to="/login" className="btn">
               Login
             </Link>
           )}

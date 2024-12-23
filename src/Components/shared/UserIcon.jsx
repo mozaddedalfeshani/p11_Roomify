@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Tooltip } from "react-tooltip";
 import "react-tooltip/dist/react-tooltip.css"; // Import styles for the tooltip
+import { AuthContext } from "../../provider/AuthProvider";
 
 const UserIcon = ({ user }) => {
+  const { LogOut } = useContext(AuthContext);
   const firstName = user?.displayName?.split(" ")[0] || "Anonymous";
+  const logOutUser = async () => {
+    try {
+      await LogOut();
+    } catch (error) {
+      console.error("Error during logout:", error); // Log the error
+    }
+  };
   console.log(user);
   return (
     <div className="flex-row flex gap-3 shadow-sm items-center justify-around">
@@ -22,7 +31,7 @@ const UserIcon = ({ user }) => {
             {/* Tooltip configuration */}
           </div>
         </div>
-        <p>Logout</p>
+        <button onClick={logOutUser}>Logout</button>
         {/* <FiLogOut className="w-10" /> */}
       </div>
     </div>
