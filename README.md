@@ -12,7 +12,7 @@ Roomify is a modern hotel booking platform that allows users to search, book, an
 
 ## 🔗 Live Demo
 
-[Live Demo](https://your-live-url.com)
+[Live Demo](https://roomify-73524.web.app/)
 
 ## 🚀 Technologies Used
 
@@ -121,18 +121,22 @@ roomify/
 ## 📝 Key Functionality
 
 - **Home Page:**
+
   - Banner slider
   - Latest hotels section with newest hotel cards
   - Extra informative sections
 
 - **Add Hotel:**
+
   - Private/protected route
   - Form to add hotel details including images, amenities, price, etc.
 
 - **All Hotels Page:**
+
   - Displays all hotels in a grid layout with "See Details" functionality.
 
 - **Hotel Details Page:**
+
   - Shows complete information about a hotel.
   - "Book Now" button with a booking form.
 
