@@ -31,18 +31,23 @@ const RoomDetails = () => {
     setIsModalOpen(true);
   };
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     // Logic to book the room
-
     const bookingData = {
-      id: room._id,
-      name: room.name,
       date: selected ? selected.toLocaleDateString() : "No date selected",
-      user: user.email,
+      email: user.email,
     };
-    console.log("Room booked:", bookingData);
+
+    try {
+      await axios.post(`http://localhost:9000/room/${room._id}/book`, bookingData);
+      console.log("Room booked:", bookingData);
+      Swal.fire("Success!", "Your room has been booked.", "success");
+    } catch (error) {
+      console.error("Error booking room:", error);
+      Swal.fire("Error!", "There was an issue booking your room.", "error");
+    }
+
     setIsModalOpen(false);
-    Swal.fire("Success!", "Your room has been booked.", "success");
   };
 
   const today = new Date();
