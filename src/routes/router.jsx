@@ -9,6 +9,7 @@ import PrivateProvider from "../provider/PrivateProvider";
 import Rooms from "../pages/Rooms";
 import RoomDetails from "../Components/shared/RoomDetails";
 import axios from "axios";
+import MyBooking from "../pages/MyBooking";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
         path: "mybookings",
         element: (
           <PrivateProvider>
-            <h2>Yes...</h2>
+            <MyBooking />
           </PrivateProvider>
         ),
       },

@@ -21,6 +21,7 @@ const RoomDetails = () => {
       axios.get(`http://localhost:9000/room/${id}`).then((res) => {
         setRoom(res.data);
         setReviews(res.data.reviews || []);
+        console.log("Room data:", res.data);
       });
     };
 
@@ -36,12 +37,24 @@ const RoomDetails = () => {
     const bookingData = {
       date: selected ? selected.toLocaleDateString() : "No date selected",
       email: user.email,
+      room: room._id,
+      name: room.name,
+      price: room.price,
     };
 
     try {
-      await axios.post(`http://localhost:9000/room/${room._id}/book`, bookingData);
+      await axios.post(
+        `http://localhost:9000/room/${room._id}/book`,
+        bookingData
+      );
       console.log("Room booked:", bookingData);
       Swal.fire("Success!", "Your room has been booked.", "success");
+      // Fetch room data again after booking
+      axios.get(`http://localhost:9000/room/${id}`).then((res) => {
+        setRoom(res.data);
+        setReviews(res.data.reviews || []);
+        console.log("Updated room data:", res.data);
+      });
     } catch (error) {
       console.error("Error booking room:", error);
       Swal.fire("Error!", "There was an issue booking your room.", "error");
@@ -78,8 +91,8 @@ const RoomDetails = () => {
             <button
               className="btn btn-primary"
               onClick={handleBookNow}
-              disabled={!room.availability}>
-              {room.availability ? "Book Now" : "Unavailable"}
+              disabled={room.booked}>
+              {!room.booked ? "Book Now" : "Unavailable"}
             </button>
           </div>
         </motion.div>

@@ -16,9 +16,9 @@ const Card = ({ roomCard }) => {
           {roomCard.name}
           <div
             className={`badge ${
-              roomCard.availability ? "badge-success" : "badge-error"
+              !roomCard.booked ? "badge-success" : "badge-error"
             } ml-2 p-1`}>
-            {roomCard.availability ? "Available" : "Unobtainable"}
+            {!roomCard.booked ? "Available" : "Booked"}
           </div>
         </h2>
         <p>Description: {roomCard.description}</p>
