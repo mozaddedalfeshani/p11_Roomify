@@ -3,6 +3,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
@@ -46,6 +47,29 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  // Email and passwrod login
+  // Sign in with email and password
+  const signInUser = (email, password) => {
+    return new Promise((resolve, reject) => {
+      if (!email) {
+        reject("Email is required");
+        return;
+      }
+      signInWithEmailAndPassword(auth, email, password)
+        .then((result) => {
+          setUser(result.user); // Set the user state with the authenticated user
+
+          resolve(result.user); // Resolve the promise with the user data
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          console.error("Error signing in: " + errorMessage); // Log wrong credentials
+
+          reject(errorMessage); // Reject the promise with the error message
+        });
+    });
+  };
+
   //
   const LogOut = async () => {
     try {
@@ -60,6 +84,7 @@ const AuthProvider = ({ children }) => {
     user,
     setUser,
     googleSignIn,
+    signInUser, // Add signInUser to the context data
     loading,
     LogOut, // Ensure LogOut is added to the context data
   };

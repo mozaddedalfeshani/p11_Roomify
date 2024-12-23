@@ -4,26 +4,32 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 
 const LoginPage = () => {
-  const { googleSignIn, loading } = useContext(AuthContext);
+  const { googleSignIn, signInUser, loading } = useContext(AuthContext);
 
   /////////////
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-  console.log("Redirected from:", from);
-
+  /////////////
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginButtonState, setLoginButtonState] = useState(false);
   const [redirectTo, setRedirectTo] = useState(null);
 
   useEffect(() => {
-    setLoginButtonState(email.length > 4 && password.length > 5);
+    const passwordValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(
+      password
+    );
+    setLoginButtonState(email.length > 4 && passwordValid);
   }, [email, password]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Removed authentication logic
-    console.log("Login attempted with email:", email);
+    try {
+      await signInUser(email, password);
+      setRedirectTo(from);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   const handleGoogleSignIn = async () => {
