@@ -54,7 +54,9 @@ function CoverflowSlider() {
                   transition={{ duration: 0.5, delay: 0.3 }}>
                   <h1 className="mb-5 text-5xl font-bold">{room.name}</h1>
                   <p className="mb-5">{room.description} </p>
-                  <Link to={`/rooms/${room._id}`} className="btn btn-primary">
+                  <Link
+                    to={`/room-details/${room._id}`}
+                    className="btn btn-primary">
                     learn more
                   </Link>
                 </motion.div>

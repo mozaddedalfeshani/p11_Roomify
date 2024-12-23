@@ -8,6 +8,7 @@ import Signup from "../pages/Signup";
 import PrivateProvider from "../provider/PrivateProvider";
 import Rooms from "../pages/Rooms";
 import RoomDetails from "../Components/shared/RoomDetails";
+import axios from "axios";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,9 @@ const router = createBrowserRouter([
             <RoomDetails />
           </PrivateProvider>
         ),
-        loader: ({ params }) => {},
+        loader: ({ params }) => {
+          axios.get(`http://localhost:9000/room/${params.id}`);
+        },
       },
     ],
   },
