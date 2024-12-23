@@ -5,6 +5,7 @@ import Card from "../Components/shared/Card";
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
   const [value, setValue] = useState("rooms");
+  const [sortOrder, setSortOrder] = useState(""); // Default to empty string
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -14,42 +15,38 @@ const Rooms = () => {
     fetchRooms();
   }, []);
 
-  const handleRoomTypeChange = async (e) => {
-    const selectedValue = e.target.value;
-    setValue(selectedValue);
-    const endpoint = selectedValue === "rooms" ? "rooms" : `type/${selectedValue}`;
-    const response = await axios.get(`http://localhost:9000/${endpoint}`);
-    setRooms(response.data);
-  };
-
   const handleSeeDetails = (roomId) => {
     // Add navigation or modal logic here
+  };
+
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+    if (e.target.value) {
+      const sortedRooms = [...rooms].sort((a, b) => {
+        return e.target.value === "asc"
+          ? a.rating - b.rating
+          : b.rating - a.rating;
+      });
+      setRooms(sortedRooms);
+    }
   };
 
   return (
     <div className="flex flex-col my-5 items-center justify-center container mx-auto">
       <h1 className="text-3xl font-bold my-2">All Rooms</h1>
-      <div className="my-5 flex flex-row justify-between items-center w-full">
-        <label htmlFor="rooms" className="mr-2">
-          Select a room type:
-        </label>
-        <select
-          id="rooms"
-          name="rooms"
-          value={value}
-          onChange={handleRoomTypeChange}
-          className="select select-bordered w-full max-w-xs">
-          <option value="rooms">All Rooms</option>
-          <option value="Deluxe King Room">Deluxe King Room</option>
-          <option value="Standard Double Room">Standard Double Room</option>
-          <option value="Premium Suite">Premium Suite</option>
-          <option value="Family Room">Family Room</option>
-          <option value="Single Economy Room">Single Economy Room</option>
-          <option value="Luxury Villa">Luxury Villa</option>
-          <option value="Executive Suite">Executive Suite</option>
-          <option value="Honeymoon Suite">Honeymoon Suite</option>
-          <option value="Beachfront Bungalow">Beachfront Bungalow</option>
-        </select>
+      <div className="w-full flex flex-col sm:flex-row justify-between mb-4">
+        <span className="label-text mb-2 sm:mb-0">Sort by Rating:</span>
+        <div className="form-control w-full sm:w-auto max-w-xs">
+          <select
+            id="sort"
+            value={sortOrder}
+            onChange={handleSortChange}
+            className="select select-bordered">
+            <option value="">Select</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mx-auto">
         {rooms.map((room) => (
