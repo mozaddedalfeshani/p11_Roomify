@@ -6,6 +6,8 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import app from "../firebase/firebase.init";
 
@@ -70,6 +72,29 @@ const AuthProvider = ({ children }) => {
     });
   };
 
+  // function to create account with email and password and store user image link and name
+  const createAccount = (email, password, name, photoURL) => {
+    return new Promise((resolve, reject) => {
+      if (!email) {
+        reject("Email is required");
+        return;
+      }
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((result) => {
+          updateProfile(result.user, {
+            displayName: name,
+            photoURL: photoURL,
+          });
+          resolve(result.user);
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          console.error("Error creating account: " + errorMessage);
+          reject(errorMessage);
+        });
+    });
+  };
+
   //
   const LogOut = async () => {
     try {
@@ -85,6 +110,7 @@ const AuthProvider = ({ children }) => {
     setUser,
     googleSignIn,
     signInUser, // Add signInUser to the context data
+    createAccount, // Add createAccount to the context data
     loading,
     LogOut, // Ensure LogOut is added to the context data
   };

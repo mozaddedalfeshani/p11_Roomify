@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
+import { AuthContext } from "../provider/AuthProvider";
 
 const Signup = () => {
   const [password, setPassword] = useState("");
@@ -16,6 +18,7 @@ const Signup = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [borderColor, setBorderColor] = useState("rgb(0, 0, 0)");
   const navigate = useNavigate();
+  const { createAccount } = useContext(AuthContext);
 
   useEffect(() => {
     const allFieldsFilled = Object.values(formFields).every(
@@ -55,7 +58,17 @@ const Signup = () => {
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(formFields, null, 2));
+    try {
+      await createAccount(
+        formFields.email,
+        formFields.password,
+        formFields.name,
+        formFields.photoUrl
+      );
+      navigate("/"); // Redirect to home page after successful signup
+    } catch (error) {
+      console.error("Signup error:", error);
+    }
   };
 
   return (
