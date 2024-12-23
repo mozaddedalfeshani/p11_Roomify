@@ -16,17 +16,27 @@ const LoginPage = () => {
   });
   const [isFormValid, setIsFormValid] = useState(false);
   const [borderColor, setBorderColor] = useState("rgb(0, 0, 0)");
+  const [initialLoading, setInitialLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-  const { createAccount, signInUser, googleSignIn, user, loading } = useContext(AuthContext);
+  const { createAccount, signInUser, googleSignIn, user, loading } =
+    useContext(AuthContext);
+
+  useEffect(() => {
+    if (user) {
+      navigate(from);
+    }
+    setInitialLoading(false);
+  }, [user, navigate, from]);
 
   useEffect(() => {
     const allFieldsFilled = Object.values(formFields).every(
       (field) => field !== ""
     );
-    setIsFormValid(allFieldsFilled && !passwordError);
-  }, [formFields, passwordError]);
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
+    setIsFormValid(allFieldsFilled && !passwordError && passwordRegex.test(password));
+  }, [formFields, passwordError, password]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -81,6 +91,7 @@ const LoginPage = () => {
       navigate(from);
     } catch (error) {
       console.error("Signup error:", error);
+      alert("Signup error: " + error.message);
     }
   };
 
@@ -91,8 +102,17 @@ const LoginPage = () => {
       navigate(from);
     } catch (error) {
       console.error("Login failed:", error);
+      alert("Login failed: " + error.message);
     }
   };
+
+  if (loading || initialLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-ring loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center p-4 sm:p-8">
@@ -118,7 +138,9 @@ const LoginPage = () => {
             : "Glad to see you again 👋 Login to your account below"}
         </p>
 
-        <form className="grid grid-cols-1 gap-4" onSubmit={isSignup ? handleSignupSubmit : handleLoginSubmit}>
+        <form
+          className="grid grid-cols-1 gap-4"
+          onSubmit={isSignup ? handleSignupSubmit : handleLoginSubmit}>
           {isSignup && (
             <>
               <div className="form-control w-full">
@@ -176,15 +198,16 @@ const LoginPage = () => {
           </div>
           <button
             type="submit"
-            className="btn btn-primary w-full"
-            disabled={!isFormValid || loading}>
+            className="btn btn-primary w-full">
             {isSignup ? "Sign up" : "Login"}
           </button>
         </form>
 
         <div className="flex flex-col justify-between mt-6">
           <h1 className="text-center my-2">or</h1>
-          <button className="btn-outline btn btn-primary w-full" onClick={handleGoogleSign}>
+          <button
+            className="btn-outline btn btn-primary w-full"
+            onClick={handleGoogleSign}>
             <FcGoogle size={24} />
             Continue with Google
           </button>
