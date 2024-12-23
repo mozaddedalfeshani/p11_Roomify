@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
 import { AuthContext } from "../provider/AuthProvider";
@@ -13,12 +12,14 @@ const Signup = () => {
     email: "",
     photoUrl: "",
     password: "",
-    phoneNumber: "",
   });
   const [isFormValid, setIsFormValid] = useState(false);
   const [borderColor, setBorderColor] = useState("rgb(0, 0, 0)");
   const navigate = useNavigate();
-  const { createAccount } = useContext(AuthContext);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+  console.log(from);
+  const { createAccount, user } = useContext(AuthContext);
 
   useEffect(() => {
     const allFieldsFilled = Object.values(formFields).every(
@@ -36,7 +37,16 @@ const Signup = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
+  const handleGoogleSign = async () => {
+    try {
+      await googleSignIn();
+      if (user) {
+        navigate(from); // Use 'from' to navigate to the desired route
+      }
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+    }
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormFields((prevState) => ({ ...prevState, [name]: value }));
@@ -46,10 +56,10 @@ const Signup = () => {
     const value = e.target.value;
     setPassword(value);
     setFormFields((prevState) => ({ ...prevState, password: value }));
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
     if (!passwordRegex.test(value)) {
       setPasswordError(
-        "Password must be at least 6 characters long and include both lowercase and uppercase letters."
+        "Password must be at least 6 characters long and include lowercase, uppercase letters, and a number."
       );
     } else {
       setPasswordError("");
@@ -65,7 +75,8 @@ const Signup = () => {
         formFields.name,
         formFields.photoUrl
       );
-      navigate("/"); // Redirect to home page after successful signup
+      alert("Signup successful!");
+      navigate(from); // Redirect to desired route after successful signup
     } catch (error) {
       console.error("Signup error:", error);
     }
@@ -88,8 +99,7 @@ const Signup = () => {
           className="text-2xl font-bold text-center mb-2"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+          transition={{ duration: 0.5 }}>
           Sign up
         </motion.h2>
         <p className="text-sm text-gray-600 text-center mb-6">
@@ -156,20 +166,6 @@ const Signup = () => {
               <p className="text-red-500 text-sm">{passwordError}</p>
             )}
           </div>
-
-          {/* Phone Number (Optional) */}
-          <div className="form-control w-full">
-            <label className="label">
-              <span className="label-text">Phone Number (Optional)</span>
-            </label>
-            <input
-              type="tel"
-              name="phoneNumber"
-              placeholder="+45 1344-343"
-              className="input input-bordered w-full"
-              onChange={handleInputChange}
-            />
-          </div>
         </form>
 
         {/* Buttons */}
@@ -183,7 +179,7 @@ const Signup = () => {
           </button>
           <h1 className="text-center my-2">or</h1>
           <button className="btn-outline btn btn-primary w-full">
-            <FcGoogle size={24} />
+            <FcGoogle size={24} onClick={handleGoogleSign} />
             Continue with Google
           </button>
         </div>
