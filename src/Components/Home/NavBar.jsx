@@ -39,13 +39,15 @@ const NavBar = () => {
       }`}>
       <Link to="/rooms">Rooms</Link>
     </li>,
-    <li
-      key="myBookings"
-      className={`font-roboto font-medium ${
-        theme === "dark" ? "text-white" : "text-black"
-      }`}>
-      <Link to="/mybookings">My Bookings</Link>
-    </li>,
+    user && (
+      <li
+        key="myBookings"
+        className={`font-roboto font-medium ${
+          theme === "dark" ? "text-white" : "text-black"
+        }`}>
+        <Link to="/mybookings">My Bookings</Link>
+      </li>
+    ),
   ];
 
   return (
