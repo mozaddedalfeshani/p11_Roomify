@@ -7,6 +7,7 @@ import LoginPage from "../pages/LoginPage";
 import Signup from "../pages/Signup";
 import PrivateProvider from "../provider/PrivateProvider";
 import Rooms from "../pages/Rooms";
+import RoomDetails from "../Components/shared/RoomDetails";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,15 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/room-details/:id",
+        element: (
+          <PrivateProvider>
+            <RoomDetails />
+          </PrivateProvider>
+        ),
+        loader: ({ params }) => {},
       },
     ],
   },

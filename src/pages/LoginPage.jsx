@@ -35,7 +35,9 @@ const LoginPage = () => {
       (field) => field !== ""
     );
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
-    setIsFormValid(allFieldsFilled && !passwordError && passwordRegex.test(password));
+    setIsFormValid(
+      allFieldsFilled && !passwordError && passwordRegex.test(password)
+    );
   }, [formFields, passwordError, password]);
 
   useEffect(() => {
@@ -109,9 +111,13 @@ const LoginPage = () => {
   if (loading || initialLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <span className="loading loading-ring loading-lg"></span>
+        <span className="loading loading-ring loading-2xl"></span>
       </div>
     );
+  }
+
+  if (user) {
+    return null; // Return null if user exists to prevent showing the login card
   }
 
   return (
@@ -196,9 +202,7 @@ const LoginPage = () => {
               <p className="text-red-500 text-sm">{passwordError}</p>
             )}
           </div>
-          <button
-            type="submit"
-            className="btn btn-primary w-full">
+          <button type="submit" className="btn btn-primary w-full">
             {isSignup ? "Sign up" : "Login"}
           </button>
         </form>

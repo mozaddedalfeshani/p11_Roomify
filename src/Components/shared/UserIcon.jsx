@@ -13,7 +13,7 @@ const UserIcon = ({ user }) => {
       console.error("Error during logout:", error); // Log the error
     }
   };
-  console.log(user);
+
   return (
     <div className="flex-row flex gap-3 shadow-sm items-center justify-around">
       {/* Change outer button to div */}

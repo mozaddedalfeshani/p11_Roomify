@@ -21,7 +21,7 @@ export const AuthContext = createContext();
 // AuthProvider component
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   ///////// All firebase functionality goes here //////////
 
