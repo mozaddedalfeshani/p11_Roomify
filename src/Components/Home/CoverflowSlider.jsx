@@ -1,39 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { Link } from "react-router-dom";
-const images = [
-  "https://edulaunchers.com/wp-content/uploads/2023/08/Visa-Processing-scaled.webp",
-  "https://careerpaths.com.bd/wp-content/uploads/2022/04/UK-Student-Visa-Process-for-bangladeshi-student.png",
-  "https://assets.studies-overseas.com/Germany_Student_Visa_Process_New_Banner_Size_1190_400_bac6de4cdf.png",
-  "https://globaltree.in/uploadsweb/blog/ireland-visa-process-application-process-requirements-and-tips-L-1726665164.webp",
-];
-const RoomInfo = [
-  {
-    id: 3,
-    "Heading Title": "Family Room",
-    price: 400 + "€",
-    des: "This is a family room with a double bed and a single bed. It is perfect for a family.",
-    img: "https://st.hzcdn.com/simgs/pictures/family-rooms/new-home-wayzata-mn-14-lecy-bros-homes-and-remodeling-img~d411bd4206e86ee4_14-6092-1-66fd2b1.jpg",
-  },
-  {
-    id: 1,
-    "Heading Title": "Single Room",
-    price: 200 + "€",
-    des: "This is a single room with a single bed and a small table. It is perfect for a single person.",
-    img: "https://webbox.imgix.net/images/owvecfmxulwbfvxm/c56a0c0d-8454-431a-9b3e-f420c72e82e3.jpg?auto=format,compress&fit=crop&crop=entropy",
-  },
-  {
-    id: 2,
-    "Heading Title": "Double Room",
-    price: 300 + "€",
-    des: "This is a double room with a double bed and a small table. It is perfect for two people.",
-    img: "https://roomraccoon.com/wp-content/uploads/2024/06/DOUBLE-ROOM-FEATURED-BLOG-IMAGES-3.png",
-  },
-];
+import { motion } from "framer-motion"; // Import Framer Motion
 
 function CoverflowSlider() {
+  const [roomInfo, setRoomInfo] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:9000/rooms")
+      .then((response) => response.json())
+      .then((data) => setRoomInfo(data))
+      .catch((error) => console.error("Error fetching room data:", error));
+  }, []);
+
   return (
     <div className="my-5">
       <Swiper
@@ -53,26 +34,32 @@ function CoverflowSlider() {
         }}
         modules={[EffectCoverflow, Pagination]}
         className="w-full rounded-lg shadow-lg">
-        {RoomInfo.map((src, index) => (
+        {roomInfo.map((room, index) => (
           <SwiperSlide key={index} className="w-full">
-            <div
+            <motion.div
               className="hero min-h-[60vh] w-full"
               style={{
-                backgroundImage: `url(${src.img})`,
-              }}>
+                backgroundImage: `url(${room.image})`,
+              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}>
               <div className="hero-overlay bg-opacity-60"></div>
               <div className="hero-content text-neutral-content text-center">
-                <div className="max-w-md">
-                  <h1 className="mb-5 text-5xl font-bold">
-                    {src["Heading Title"]}
-                  </h1>
-                  <p className="mb-5">{src.des} </p>
-                  <Link to="rooms" className="btn btn-primary">
+                <motion.div
+                  className="max-w-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}>
+                  <h1 className="mb-5 text-5xl font-bold">{room.name}</h1>
+                  <p className="mb-5">{room.description} </p>
+                  <Link to={`/rooms/${room._id}`} className="btn btn-primary">
                     learn more
                   </Link>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </SwiperSlide>
         ))}
       </Swiper>
