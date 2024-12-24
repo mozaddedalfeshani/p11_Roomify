@@ -37,42 +37,21 @@ const MyBooking = () => {
   };
 
   const handleReview = (room) => {
-    Swal.fire({
-      title: `Review for ${room.name}`,
-      html: `
-        <label>Username:</label>
-        <input type="text" id="username" value="${user.email}" readonly class="swal2-input" />
-        <label>Rating:</label>
-        <input type="number" id="rating" class="swal2-input" min="0" max="5" />
-        <label>Comment:</label>
-        <textarea id="comment" class="swal2-textarea"></textarea>
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Submit",
-      preConfirm: () => {
-        const rating = Swal.getPopup().querySelector("#rating").value;
-        const comment = Swal.getPopup().querySelector("#comment").value;
-        return { rating, comment };
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const newReview = {
-          username: user.email,
-          rating: result.value.rating,
-          comment: result.value.comment,
-          timestamp: new Date().toISOString(),
-        };
-        await axios.post(
-          `http://localhost:9000/addReview/${room._id}`,
-          newReview
-        );
-        Swal.fire(
-          "Review Submitted!",
-          "Your review has been submitted.",
-          "success"
-        );
-      }
-    });
+    const modal = document.getElementById("review-modal");
+    modal.showModal();
+    document.getElementById("submit-review").onclick = async () => {
+      const rating = document.getElementById("rating").value;
+      const comment = document.getElementById("comment").value;
+      const newReview = {
+        username: user.email,
+        rating,
+        comment,
+        timestamp: new Date().toISOString(),
+      };
+      await axios.post(`http://localhost:9000/addReview/${room._id}`, newReview);
+      Swal.fire("Review Submitted!", "Your review has been submitted.", "success");
+      modal.close();
+    };
   };
 
   const getBorderColor = (status) => {
@@ -132,6 +111,23 @@ const MyBooking = () => {
           </tbody>
         </table>
       </div>
+
+      {/* DaisyUI Modal for Review */}
+      <dialog id="review-modal" className="modal">
+        <form method="dialog" className="modal-box">
+          <h3 className="font-bold text-lg">Review for Room</h3>
+          <label>Username:</label>
+          <input type="text" id="username" value={user.email} readOnly className="input input-bordered w-full mb-2" />
+          <label>Rating:</label>
+          <input type="number" id="rating" className="input input-bordered w-full mb-2" min="1" max="5" />
+          <label>Comment:</label>
+          <textarea id="comment" className="textarea textarea-bordered w-full mb-2"></textarea>
+          <div className="modal-action">
+            <button id="submit-review" className="btn">Submit</button>
+            <button className="btn" onClick={() => document.getElementById("review-modal").close()}>Close</button>
+          </div>
+        </form>
+      </dialog>
     </div>
   );
 };

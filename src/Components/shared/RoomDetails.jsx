@@ -35,18 +35,26 @@ const RoomDetails = () => {
   const handleConfirmBooking = async () => {
     // Logic to book the room
     const bookingData = {
-      date: selected ? selected.toLocaleDateString() : "No date selected",
-      email: user.email,
-      room: room._id,
+      bookingDate: selected
+        ? selected.toLocaleDateString()
+        : "No date selected",
+      bookedBy: user.email,
+      booked: true,
+      availability: false,
+      description: room.description,
+      image: room.image,
       name: room.name,
       price: room.price,
+      reviews: room.reviews,
+      rating: room.rating,
     };
 
     try {
-      await axios.post(
-        `http://localhost:9000/room/${room._id}/book`,
-        bookingData
-      );
+      await axios
+        .post(`http://localhost:9000/room/${room._id}/book`, bookingData)
+        .then((res) => {
+          console.log("Booking axios data:", res.data);
+        });
       console.log("Room booked:", bookingData);
       Swal.fire("Success!", "Your room has been booked.", "success");
       // Fetch room data again after booking
