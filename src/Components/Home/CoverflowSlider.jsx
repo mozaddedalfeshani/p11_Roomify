@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination } from "swiper/modules";
+import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules"; // Import Autoplay module
 import "swiper/swiper-bundle.css";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // Import Framer Motion
@@ -32,7 +32,11 @@ function CoverflowSlider() {
         pagination={{
           clickable: true,
         }}
-        modules={[EffectCoverflow, Pagination]}
+        autoplay={{
+          delay: 2000, // Set delay to 1 second
+          disableOnInteraction: false,
+        }}
+        modules={[EffectCoverflow, Pagination, Autoplay]} // Add Autoplay module
         className="w-full rounded-lg shadow-lg">
         {roomInfo.map((room, index) => (
           <SwiperSlide key={index} className="w-full">

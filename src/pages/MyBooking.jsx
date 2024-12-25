@@ -131,10 +131,6 @@ const MyBooking = () => {
     }
   };
 
-  const handleUpdate = (item) => {
-    // Implement update logic here
-  };
-
   const handleUpdateDate = (item) => {
     setSelectedBooking(item);
     document.getElementById("my_modal_5").showModal();
@@ -197,11 +193,7 @@ const MyBooking = () => {
                       className="px-4 btn btn-outline py-2 rounded ml-2">
                       Add Review
                     </button>
-                    <button
-                      onClick={() => handleUpdate(item)}
-                      className="px-4 btn btn-outline py-2 rounded ml-2">
-                      Update
-                    </button>
+
                     <button
                       onClick={() => handleUpdateDate(setTemp(item))}
                       className="px-4 btn btn-outline py-2 rounded ml-2">
