@@ -18,11 +18,26 @@ const MyBooking = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [temp, setTemp] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isTableView, setIsTableView] = useState(true); // State to toggle view
 
   const fetchData = async () => {
-    axios.get(`${HOST}/roomEmail/${user.email}`).then((res) => {
-      setData(res.data);
-    });
+    try {
+      const res = await axios.get(`${HOST}/roomEmail/${user.email}`);
+      const sortedData = res.data.map((room) => ({
+        ...room,
+        reviews: room.reviews.sort(
+          (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+        ),
+      }));
+      setData(sortedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Swal.fire(
+        "Error!",
+        "There was an error fetching your bookings. Please try again later.",
+        "error"
+      );
+    }
   };
 
   useEffect(() => {
@@ -30,7 +45,6 @@ const MyBooking = () => {
   }, [user.email]); // Removed 'data' from dependency array
 
   const handleCancel = async (item) => {
-
     const data = {
       booked: false,
       bookedBy: "",
@@ -90,12 +104,10 @@ const MyBooking = () => {
       comment,
       timestamp: new Date().toISOString(),
       roomId: selectedRoom._id,
+      imageLink: user.photoURL,
     };
     try {
-
-
-      axios
-        .post(`${HOST}/rooms/${selectedRoom._id}/review`, reviewData);
+      axios.post(`${HOST}/rooms/${selectedRoom._id}/review`, reviewData);
       Swal.fire(
         "Success!",
         "Your review has been submitted successfully.",
@@ -148,19 +160,81 @@ const MyBooking = () => {
   };
   const today = new Date();
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold my-2 text-center">My Bookings</h1>
+      <div className="flex justify-center mb-4">
+        <button
+          className="btn btn-outline"
+          onClick={() => setIsTableView(!isTableView)}>
+          Toggle to {isTableView ? "Card View" : "Table View"}
+        </button>
+      </div>
       <div className="card shadow-md">
         {data.length === 0 ? (
           <p className="text-center py-4">You haven't booked any rooms yet.</p>
+        ) : isTableView ? (
+          <div className="w-full overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Image
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((item) => (
+                  <tr key={item._id} className="shadow-md">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-48 object-cover"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <h2 className="text-xl font-bold">{item.name}</h2>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <p className="text-gray-600">${item.price}</p>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex justify-between">
+                        <button
+                          onClick={() => handleCancel(item)}
+                          className="btn btn-outline">
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleAddReview(item)}
+                          className="btn btn-outline ml-2">
+                          Add Review
+                        </button>
+                        <button
+                          onClick={() => handleUpdateDate(setTemp(item))}
+                          className="btn btn-outline ml-2">
+                          Update Date
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
             {data.map((item) => (
-              <div
-                key={item._id}
-                className={`card border-l-4 ${getBorderColor(
-                  item.status
-                )} shadow-md`}>
+              <div key={item._id} className="card shadow-md">
                 <img
                   src={item.image}
                   alt={item.name}
@@ -168,7 +242,7 @@ const MyBooking = () => {
                 />
                 <div className="p-4">
                   <h2 className="text-xl font-bold">{item.name}</h2>
-                  <p className="text-gray-600">${item.price}</p>
+                  <p className="">${item.price}</p>
                   <div className="flex justify-between mt-4">
                     <button
                       onClick={() => handleCancel(item)}
