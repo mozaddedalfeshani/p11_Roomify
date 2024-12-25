@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthProvider";
 import { motion } from "framer-motion";
 import Swal from "sweetalert2";
@@ -10,6 +10,8 @@ import { HOST } from "../../host";
 import { Link } from "react-router-dom";
 const RoomDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation(); // Ensure location is imported and used
 
   const [room, setRoom] = useState({});
   const [reviews, setReviews] = useState([]);
@@ -97,10 +99,12 @@ const RoomDetails = () => {
           <p className="text-start m-0">{room.description}</p>
           <div className="card-actions mt-4">
             <p className="text-start m-0">{`Price: $${room.price}`}</p>
-            {!user ? (
-              <Link className="btn btn-primary" to="/login">
-                Login to book
-              </Link>
+            {!user && !room.booked ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate("/login", { state: { from: location } })}>
+                Book 
+              </button>
             ) : (
               <button
                 className="btn btn-primary"
