@@ -3,15 +3,19 @@ import { AuthContext } from "../provider/AuthProvider";
 import axios from "axios";
 import Swal from "sweetalert2"; // Import SweetAlert
 import { HOST } from "../host";
+import Rate from "rc-rate"; // Import rc-rate
+import "rc-rate/assets/index.css"; // Import rc-rate styles
+
 const MyBooking = () => {
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
-  const [review, setReview] = useState({ rating: 0, comment: "" });
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       axios.get(`${HOST}/roomEmail/${user.email}`).then((res) => {
-        console.log("data", res.data);
         setData(res.data);
       });
     };
@@ -20,19 +24,17 @@ const MyBooking = () => {
 
   const handleCancel = async (item) => {
     console.log(item);
-    const data = [
-      {
-        booked: false,
-        bookedBy: "",
-        image: item.image,
-        name: item.name,
-        price: item.price,
-        rating: item.rating,
-        reviews: item.reviews,
-        _id: item._id,
-        availability: item.availability,
-      },
-    ];
+    const data = {
+      booked: false,
+      bookedBy: "",
+      image: item.image,
+      name: item.name,
+      price: item.price,
+      rating: item.rating,
+      reviews: item.reviews,
+      _id: item._id,
+      availability: item.availability,
+    };
     Swal.fire({
       title: "Are you sure?",
       text: `Do you want to cancel the booking for ${item.name} at $${item.price}?`,
@@ -44,35 +46,67 @@ const MyBooking = () => {
       if (result.isConfirmed) {
         // Perform cancellation logic here
         console.log("Cancel booking", data);
-        axios
-          .post(`${HOST}/room/${item._id}/cancel`, data)
-          .then((res) => console.log("answer: ${res})"));
-
-        Swal.fire("Cancelled!", "Your booking has been cancelled.", "success");
+        try {
+          await axios.post(`${HOST}/room/${item._id}/cancel`, data);
+          Swal.fire(
+            "Cancelled!",
+            "Your booking has been cancelled.",
+            "success"
+          );
+          // Optionally, refresh the data to reflect the cancellation
+          setData((prevData) =>
+            prevData.filter((room) => room._id !== item._id)
+          );
+        } catch (error) {
+          console.error("Error cancelling booking:", error);
+          Swal.fire(
+            "Error!",
+            "There was an error cancelling your booking.",
+            "error"
+          );
+        }
       }
     });
   };
 
-  const handleReview = (room) => {
-    const modal = document.getElementById("review-modal");
-    modal.showModal();
-    document.getElementById("submit-review").onclick = async () => {
-      const rating = document.getElementById("rating").value;
-      const comment = document.getElementById("comment").value;
-      const newReview = {
-        username: user.email,
-        rating,
-        comment,
-        timestamp: new Date().toISOString(),
-      };
-      await axios.post(`${HOST}/addReview/${room._id}`, newReview);
+  const handleAddReview = (item) => {
+    setSelectedRoom(item);
+    document.getElementById("review_modal").showModal();
+  };
+
+  const submitReview = () => {
+    const reviewData = {
+      username: user.displayName,
+      rating,
+      comment,
+      timestamp: new Date().toISOString(),
+      roomId: selectedRoom._id,
+    };
+    try {
+      console.log("Review submitted:", reviewData);
+      console.log("Name:", user.displayName);
+      console.log("Rating:", rating);
+      console.log("Review Text:", comment);
+      console.log("Time Stamp:", new Date().toISOString());
+
+      axios
+        .post(`${HOST}/rooms/${selectedRoom._id}/review`, reviewData)
+        .then((res) => console.log(res.data));
       Swal.fire(
-        "Review Submitted!",
-        "Your review has been submitted.",
+        "Success!",
+        "Your review has been submitted successfully.",
         "success"
       );
-      modal.close();
-    };
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      Swal.fire(
+        "Error!",
+        "There was an error submitting your review.",
+        "error"
+      );
+    }
+    // Optionally, send reviewData to the server
+    document.getElementById("review_modal").close();
   };
 
   const getBorderColor = (status) => {
@@ -92,82 +126,95 @@ const MyBooking = () => {
     <div className="overflow-x-auto">
       <h1 className="text-3xl font-bold my-2 text-center">My Bookings</h1>
       <div className="card shadow-md">
-        <table className="min-w-full">
-          <thead>
-            <tr>
-              <th className="py-2 text-center">Image</th>
-              <th className="py-2 text-center">Name</th>
-              <th className="py-2 text-center">Price</th>
-              <th className="py-2 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item) => (
-              <tr
-                key={item._id}
-                className={`border-l-4 ${getBorderColor(item.status)}`}>
-                <td className="py-2 text-center">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-20 h-20 object-cover mx-auto"
-                  />
-                </td>
-                <td className="py-2 text-center">{item.name}</td>
-                <td className="py-2 text-center">${item.price}</td>
-                <td className="py-2 text-center">
-                  <button
-                    onClick={() => handleCancel(item)}
-                    className="px-4 btn btn-outline  py-2 rounded">
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleReview(item)}
-                    className="px-4 btn btn-outline  py-2 rounded ml-2">
-                    Review
-                  </button>
-                </td>
+        {data.length === 0 ? (
+          <p className="text-center py-4">You haven't booked any rooms yet.</p>
+        ) : (
+          <table className="min-w-full">
+            <thead>
+              <tr>
+                <th className="py-2 text-center">Image</th>
+                <th className="py-2 text-center">Name</th>
+                <th className="py-2 text-center">Price</th>
+                <th className="py-2 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr
+                  key={item._id}
+                  className={`border-l-4 ${getBorderColor(item.status)}`}>
+                  <td className="py-2 text-center">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-20 h-20 object-cover mx-auto"
+                    />
+                  </td>
+                  <td className="py-2 text-center">{item.name}</td>
+                  <td className="py-2 text-center">${item.price}</td>
+                  <td className="py-2 text-center">
+                    <button
+                      onClick={() => handleCancel(item)}
+                      className="px-4 btn btn-outline py-2 rounded">
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => handleAddReview(item)}
+                      className="px-4 btn btn-outline py-2 rounded ml-2">
+                      Add Review
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
-
-      {/* DaisyUI Modal for Review */}
-      <dialog id="review-modal" className="modal">
-        <form method="dialog" className="modal-box">
-          <h3 className="font-bold text-lg">Review for Room</h3>
-          <label>Username:</label>
-          <input
-            type="text"
-            id="username"
-            value={user.email}
-            readOnly
-            className="input input-bordered w-full mb-2"
-          />
-          <label>Rating:</label>
-          <input
-            type="number"
-            id="rating"
-            className="input input-bordered w-full mb-2"
-            min="1"
-            max="5"
-          />
-          <label>Comment:</label>
-          <textarea
-            id="comment"
-            className="textarea textarea-bordered w-full mb-2"></textarea>
+      <dialog id="review_modal" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Add Review</h3>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Username</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered"
+              value={user.displayName}
+              readOnly
+            />
+          </div>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Rating</span>
+            </label>
+            <Rate
+              value={rating}
+              onChange={setRating}
+              count={5}
+              allowHalf
+            />
+          </div>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Comment</span>
+            </label>
+            <textarea
+              className="textarea textarea-bordered"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}></textarea>
+          </div>
           <div className="modal-action">
-            <button id="submit-review" className="btn">
+            <button className="btn" onClick={submitReview}>
               Submit
             </button>
             <button
               className="btn"
-              onClick={() => document.getElementById("review-modal").close()}>
+              onClick={() => document.getElementById("review_modal").close()}>
               Close
             </button>
           </div>
-        </form>
+        </div>
       </dialog>
     </div>
   );

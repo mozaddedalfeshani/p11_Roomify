@@ -32,22 +32,13 @@ const RoomDetails = () => {
   const handleBookNow = () => {
     setIsModalOpen(true);
   };
-
   const handleConfirmBooking = async () => {
-    // Logic to book the room
     const bookingData = {
       bookingDate: selected
         ? selected.toLocaleDateString()
         : "No date selected",
       bookedBy: user.email,
       booked: true,
-      availability: false,
-      description: room.description,
-      image: room.image,
-      name: room.name,
-      price: room.price,
-      reviews: room.reviews,
-      rating: room.rating,
     };
 
     try {
@@ -57,16 +48,27 @@ const RoomDetails = () => {
           console.log("Booking axios data:", res.data);
         });
       console.log("Room booked:", bookingData);
+
       Swal.fire("Success!", "Your room has been booked.", "success");
+
       // Fetch room data again after booking
-      axios.get(`${HOST}/room/${id}`).then((res) => {
-        setRoom(res.data);
-        setReviews(res.data.reviews || []);
-        console.log("Updated room data:", res.data);
-      });
+      setTimeout(() => {
+        axios.get(`${HOST}/room/${id}`).then((res) => {
+          setRoom(res.data);
+          setReviews(res.data.reviews || []);
+          console.log("Updated room data:", res.data);
+        });
+      }, 500); // Small delay to ensure consistency
     } catch (error) {
-      console.error("Error booking room:", error);
-      Swal.fire("Error!", "There was an issue booking your room.", "error");
+      console.error(
+        "Error booking room:",
+        error.response?.data || error.message
+      );
+      Swal.fire(
+        "Error!",
+        error.response?.data || "There was an issue booking your room.",
+        "error"
+      );
     }
 
     setIsModalOpen(false);
@@ -132,7 +134,7 @@ const RoomDetails = () => {
                 {review.username}
                 {/* <time className="text-xs opacity-50">2 hours ago</time> */}
               </div>
-              <div className="chat-bubble">{review.review}</div>
+              <div className="chat-bubble">{review.comment}</div>
               <div className="chat-footer opacity-50">Seen</div>
             </motion.div>
           ))
