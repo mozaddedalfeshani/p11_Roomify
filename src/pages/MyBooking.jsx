@@ -122,6 +122,11 @@ const MyBooking = () => {
     }
   };
 
+  const handleUpdate = (item) => {
+    // Implement update logic here
+    console.log("Update booking", item);
+  };
+
   return (
     <div className="overflow-x-auto">
       <h1 className="text-3xl font-bold my-2 text-center">My Bookings</h1>
@@ -162,6 +167,11 @@ const MyBooking = () => {
                       onClick={() => handleAddReview(item)}
                       className="px-4 btn btn-outline py-2 rounded ml-2">
                       Add Review
+                    </button>
+                    <button
+                      onClick={() => handleUpdate(item)}
+                      className="px-4 btn btn-outline py-2 rounded ml-2">
+                      Update
                     </button>
                   </td>
                 </tr>
