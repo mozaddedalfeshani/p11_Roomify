@@ -3,6 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../provider/AuthProvider";
+import Swal from 'sweetalert2';
 
 const LoginPage = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -89,11 +90,19 @@ const LoginPage = () => {
         formFields.name,
         formFields.photoUrl
       );
-      alert("Signup successful!");
+      Swal.fire({
+        title: "Signup successful!",
+        text: "You have successfully signed up.",
+        icon: "success"
+      });
       navigate(from);
     } catch (error) {
       console.error("Signup error:", error);
-      alert("Signup error: " + error.message);
+      Swal.fire({
+        title: "Signup error",
+        text: error.message,
+        icon: "error"
+      });
     }
   };
 
@@ -104,7 +113,11 @@ const LoginPage = () => {
       navigate(from);
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Login failed: " + error.message);
+      Swal.fire({
+        title: "Login failed",
+        text: error.message,
+        icon: "error"
+      });
     }
   };
 
