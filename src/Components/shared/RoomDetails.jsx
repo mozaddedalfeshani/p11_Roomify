@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { HOST } from "../../host";
-
+import { Link } from "react-router-dom";
 const RoomDetails = () => {
   const { id } = useParams();
 
@@ -22,7 +22,6 @@ const RoomDetails = () => {
       axios.get(`${HOST}/room/${id}`).then((res) => {
         setRoom(res.data);
         setReviews(res.data.reviews || []);
-
       });
     };
 
@@ -40,14 +39,14 @@ const RoomDetails = () => {
       bookedBy: user.email,
       booked: true,
     };
-
+    if (!user) {
+      Swal.fire("Error!", "You need to login to book a room.", "error");
+      return;
+    }
     try {
       await axios
         .post(`${HOST}/room/${room._id}/book`, bookingData)
-        .then((res) => {
-
-        });
-
+        .then((res) => {});
 
       Swal.fire("Success!", "Your room has been booked.", "success");
 
@@ -56,7 +55,6 @@ const RoomDetails = () => {
         axios.get(`${HOST}/room/${id}`).then((res) => {
           setRoom(res.data);
           setReviews(res.data.reviews || []);
-
         });
       }, 500); // Small delay to ensure consistency
     } catch (error) {
@@ -99,12 +97,18 @@ const RoomDetails = () => {
           <p className="text-start m-0">{room.description}</p>
           <div className="card-actions mt-4">
             <p className="text-start m-0">{`Price: $${room.price}`}</p>
-            <button
-              className="btn btn-primary"
-              onClick={handleBookNow}
-              disabled={room.booked}>
-              {!room.booked ? "Book Now" : "Unavailable"}
-            </button>
+            {!user ? (
+              <Link className="btn btn-primary" to="/login">
+                Login to book
+              </Link>
+            ) : (
+              <button
+                className="btn btn-primary"
+                onClick={handleBookNow}
+                disabled={room.booked}>
+                {!room.booked ? "Book Now" : "Unavailable"}
+              </button>
+            )}
           </div>
         </motion.div>
       </motion.div>

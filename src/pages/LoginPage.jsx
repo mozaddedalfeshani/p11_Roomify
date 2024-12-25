@@ -130,7 +130,17 @@ const LoginPage = () => {
             {/* Remove the logo image */}
           </div>
         </div>
-
+        {isSignup ? (
+          <img
+            src="https://i.ibb.co.com/Jkzjn5B/open-enrollment.gif"
+            className="w-16 rounded-lg text-center flex justify-center mx-auto"
+          />
+        ) : (
+          <img
+            src="https://i.ibb.co.com/L6LYPf4/login.gif"
+            className="w-16 rounded-lg text-center flex justify-center mx-auto"
+          />
+        )}
         <motion.h2
           className="text-2xl font-bold text-center mb-2"
           initial={{ opacity: 0, y: -20 }}
@@ -138,6 +148,7 @@ const LoginPage = () => {
           transition={{ duration: 0.5 }}>
           {isSignup ? "Sign up" : "Login"}
         </motion.h2>
+
         <p className="text-sm text-gray-600 text-center mb-6">
           {isSignup
             ? "Enter your details below to create your account and get started."

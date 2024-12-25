@@ -43,11 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/room-details/:id",
-        element: (
-          <PrivateProvider>
-            <RoomDetails />
-          </PrivateProvider>
-        ),
+        element: <RoomDetails />,
         loader: ({ params }) => {
           axios.get(`${HOST}/room/${params.id}`);
         },
