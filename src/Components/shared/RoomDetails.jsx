@@ -13,7 +13,7 @@ const RoomDetails = () => {
   const navigate = useNavigate();
   const location = useLocation(); // Ensure location is imported and used
 
-  const [room, setRoom] = useState({});
+  const [room, setRoom] = useState(null);
   const [reviews, setReviews] = useState([]);
   const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,6 +76,13 @@ const RoomDetails = () => {
 
   const today = new Date();
 
+  if (!room) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-ring loading-2xl"></span>
+      </div>
+    );
+  }
   return (
     <div className="container mx-auto p-4">
       <motion.div
@@ -102,8 +109,10 @@ const RoomDetails = () => {
             {!user && !room.booked ? (
               <button
                 className="btn btn-primary"
-                onClick={() => navigate("/login", { state: { from: location } })}>
-                Book 
+                onClick={() =>
+                  navigate("/login", { state: { from: location } })
+                }>
+                Book
               </button>
             ) : (
               <button
