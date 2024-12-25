@@ -5,13 +5,19 @@ import Swal from "sweetalert2"; // Import SweetAlert
 import { HOST } from "../host";
 import Rate from "rc-rate"; // Import rc-rate
 import "rc-rate/assets/index.css"; // Import rc-rate styles
+import { DayPicker } from "react-day-picker"; // Import DayPicker
+import "react-day-picker/dist/style.css"; // Import DayPicker styles
 
 const MyBooking = () => {
+  const [selected, setSelected] = useState();
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [temp, setTemp] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   const fetchData = async () => {
     axios.get(`${HOST}/roomEmail/${user.email}`).then((res) => {
@@ -71,20 +77,6 @@ const MyBooking = () => {
       }
     });
   };
-  const Update = async (item) => {
-    console.log(item);
-    const data = {
-      booked: false,
-      bookedBy: "",
-      image: item.image,
-      name: item.name,
-      price: item.price,
-      rating: item.rating,
-      reviews: item.reviews,
-      _id: item._id,
-    };
-
-  };
 
   const handleAddReview = (item) => {
     setSelectedRoom(item);
@@ -141,9 +133,29 @@ const MyBooking = () => {
 
   const handleUpdate = (item) => {
     // Implement update logic here
-    console.log("Update booking", item);
   };
 
+  const handleUpdateDate = (item) => {
+    setSelectedBooking(item);
+    document.getElementById("my_modal_5").showModal();
+  };
+
+  const submitDateUpdate = async (item) => {
+    const data = {
+      booked: true,
+      bookedBy: user.displayName,
+      image: item.image,
+      name: item.name,
+      price: item.price,
+      rating: item.rating,
+      reviews: item.reviews,
+      _id: item._id,
+      bookingDate: selected.toLocaleDateString(),
+    };
+    console.log("Updated booking data:", data);
+    document.getElementById("my_modal_5").close();
+  };
+  const today = new Date();
   return (
     <div className="overflow-x-auto">
       <h1 className="text-3xl font-bold my-2 text-center">My Bookings</h1>
@@ -190,6 +202,11 @@ const MyBooking = () => {
                       className="px-4 btn btn-outline py-2 rounded ml-2">
                       Update
                     </button>
+                    <button
+                      onClick={() => handleUpdateDate(setTemp(item))}
+                      className="px-4 btn btn-outline py-2 rounded ml-2">
+                      Update Date
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -233,6 +250,41 @@ const MyBooking = () => {
             <button
               className="btn"
               onClick={() => document.getElementById("review_modal").close()}>
+              Close
+            </button>
+          </div>
+        </div>
+      </dialog>
+      <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Update Booking Date</h3>
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Select New Date</span>
+            </label>
+            <div className="flex justify-center flex-1">
+              <DayPicker
+                mode="single"
+                selected={selected}
+                onSelect={setSelected}
+                fromDate={today}
+                footer={
+                  selected
+                    ? `Selected: ${selected.toLocaleDateString()}`
+                    : "Pick a day."
+                }
+              />
+            </div>
+          </div>
+          <div className="modal-action">
+            <button
+              className="btn btn-primary"
+              onClick={() => submitDateUpdate(temp)}>
+              Submit
+            </button>
+            <button
+              className="btn"
+              onClick={() => document.getElementById("my_modal_5").close()}>
               Close
             </button>
           </div>
