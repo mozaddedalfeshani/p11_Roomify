@@ -13,14 +13,15 @@ const MyBooking = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
+  const fetchData = async () => {
+    axios.get(`${HOST}/roomEmail/${user.email}`).then((res) => {
+      setData(res.data);
+    });
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      axios.get(`${HOST}/roomEmail/${user.email}`).then((res) => {
-        setData(res.data);
-      });
-    };
     fetchData();
-  }, [user.email]);
+  }, [user.email, data]);
 
   const handleCancel = async (item) => {
     console.log(item);
@@ -33,8 +34,8 @@ const MyBooking = () => {
       rating: item.rating,
       reviews: item.reviews,
       _id: item._id,
-      availability: item.availability,
     };
+
     Swal.fire({
       title: "Are you sure?",
       text: `Do you want to cancel the booking for ${item.name} at $${item.price}?`,
@@ -53,10 +54,12 @@ const MyBooking = () => {
             "Your booking has been cancelled.",
             "success"
           );
-          // Optionally, refresh the data to reflect the cancellation
+          // Update the UI instantly by removing the canceled room from the state
           setData((prevData) =>
             prevData.filter((room) => room._id !== item._id)
           );
+          // Fetch the updated data after cancellation
+          fetchData();
         } catch (error) {
           console.error("Error cancelling booking:", error);
           Swal.fire(
@@ -67,6 +70,20 @@ const MyBooking = () => {
         }
       }
     });
+  };
+  const Update = async (item) => {
+    console.log(item);
+    const data = {
+      booked: false,
+      bookedBy: "",
+      image: item.image,
+      name: item.name,
+      price: item.price,
+      rating: item.rating,
+      reviews: item.reviews,
+      _id: item._id,
+    };
+
   };
 
   const handleAddReview = (item) => {
@@ -198,12 +215,7 @@ const MyBooking = () => {
             <label className="label">
               <span className="label-text">Rating</span>
             </label>
-            <Rate
-              value={rating}
-              onChange={setRating}
-              count={5}
-              allowHalf
-            />
+            <Rate value={rating} onChange={setRating} count={5} allowHalf />
           </div>
           <div className="form-control">
             <label className="label">
