@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Card from "../Components/shared/Card";
+import { HOST } from "../host";
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
@@ -9,7 +10,7 @@ const Rooms = () => {
 
   useEffect(() => {
     const fetchRooms = async () => {
-      const response = await axios.get(`http://localhost:9000/rooms`);
+      const response = await axios.get(`${HOST}/rooms`);
       setRooms(response.data);
     };
     fetchRooms();

@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 
 const Card = ({ roomCard }) => {
   return (
-    <div className="card bg-base-100 shadow-xl max-w-96">
+    <Link
+      to={`/room-details/${roomCard._id}`}
+      className="card bg-base-100 shadow-xl max-w-96">
       <figure className="h-48 w-full overflow-hidden">
         <img
           src={roomCard.image}
@@ -24,15 +26,9 @@ const Card = ({ roomCard }) => {
         <p>Description: {roomCard.description}</p>
         <p>Price: ${roomCard.price}</p>
         <p>Rating: {roomCard.rating}</p>
-        <div className="card-actions justify-end">
-          <Link
-            to={`/room-details/${roomCard._id}`}
-            className="btn btn-primary">
-            See Details
-          </Link>
-        </div>
+        <div className="card-actions justify-end"></div>
       </div>
-    </div>
+    </Link>
   );
 };
 

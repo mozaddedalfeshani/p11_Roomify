@@ -10,6 +10,7 @@ import Rooms from "../pages/Rooms";
 import RoomDetails from "../Components/shared/RoomDetails";
 import axios from "axios";
 import MyBooking from "../pages/MyBooking";
+import { HOST } from "../host";
 
 const router = createBrowserRouter([
   {
@@ -48,7 +49,7 @@ const router = createBrowserRouter([
           </PrivateProvider>
         ),
         loader: ({ params }) => {
-          axios.get(`http://localhost:9000/room/${params.id}`);
+          axios.get(`${HOST}/room/${params.id}`);
         },
       },
     ],

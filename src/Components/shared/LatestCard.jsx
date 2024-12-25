@@ -10,7 +10,7 @@ const LatestCard = ({ visaCard }) => {
       <div className="card-body">
         <h2 className="card-title">
           {visaCard.name}
-          {visaCard.availability ? (
+          {!visaCard.booked ? (
             <div className="badge badge-primary">Available</div>
           ) : (
             <div className="badge badge-secondary">Unavailable</div>
@@ -21,11 +21,6 @@ const LatestCard = ({ visaCard }) => {
         <p>Rating: {visaCard.rating} stars</p>
 
         <div className="card-actions justify-end">
-          <Link
-            to={`/room-details/${visaCard._id}`}
-            className="btn btn-primary">
-            See Details
-          </Link>
           <Link
             to={`/room-details/${visaCard._id}`}
             className="btn btn-secondary">

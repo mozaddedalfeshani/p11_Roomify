@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
+import { HOST } from "../../host";
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const RoomDetails = () => {
 
   useEffect(() => {
     const fetchRoom = async () => {
-      axios.get(`http://localhost:9000/room/${id}`).then((res) => {
+      axios.get(`${HOST}/room/${id}`).then((res) => {
         setRoom(res.data);
         setReviews(res.data.reviews || []);
         console.log("Room data:", res.data);
@@ -51,14 +52,14 @@ const RoomDetails = () => {
 
     try {
       await axios
-        .post(`http://localhost:9000/room/${room._id}/book`, bookingData)
+        .post(`${HOST}/room/${room._id}/book`, bookingData)
         .then((res) => {
           console.log("Booking axios data:", res.data);
         });
       console.log("Room booked:", bookingData);
       Swal.fire("Success!", "Your room has been booked.", "success");
       // Fetch room data again after booking
-      axios.get(`http://localhost:9000/room/${id}`).then((res) => {
+      axios.get(`${HOST}/room/${id}`).then((res) => {
         setRoom(res.data);
         setReviews(res.data.reviews || []);
         console.log("Updated room data:", res.data);

@@ -4,12 +4,12 @@ import { EffectCoverflow, Pagination } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion"; // Import Framer Motion
-
+import { HOST } from "../../host";
 function CoverflowSlider() {
   const [roomInfo, setRoomInfo] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:9000/rooms")
+    fetch(`${HOST}/rooms`)
       .then((response) => response.json())
       .then((data) => setRoomInfo(data))
       .catch((error) => console.error("Error fetching room data:", error));

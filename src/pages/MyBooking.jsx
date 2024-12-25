@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../provider/AuthProvider";
 import axios from "axios";
 import Swal from "sweetalert2"; // Import SweetAlert
-
+import { HOST } from "../host";
 const MyBooking = () => {
   const { user } = useContext(AuthContext);
   const [data, setData] = useState([]);
@@ -10,7 +10,7 @@ const MyBooking = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      axios.get(`http://localhost:9000/roomEmail/${user.email}`).then((res) => {
+      axios.get(`${HOST}/roomEmail/${user.email}`).then((res) => {
         console.log("data", res.data);
         setData(res.data);
       });
@@ -18,19 +18,36 @@ const MyBooking = () => {
     fetchData();
   }, [user.email]);
 
-  const handleCancel = (room) => {
+  const handleCancel = async (item) => {
+    console.log(item);
+    const data = [
+      {
+        booked: false,
+        bookedBy: "",
+        image: item.image,
+        name: item.name,
+        price: item.price,
+        rating: item.rating,
+        reviews: item.reviews,
+        _id: item._id,
+        availability: item.availability,
+      },
+    ];
     Swal.fire({
       title: "Are you sure?",
-      text: `Do you want to cancel the booking for ${room.name}?`,
+      text: `Do you want to cancel the booking for ${item.name} at $${item.price}?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, cancel it!",
+      cancelButtonText: "No, keep it",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await axios.delete(`http://localhost:9000/cancelBooking/${room._id}`);
-        setData(data.filter((item) => item._id !== room._id));
+        // Perform cancellation logic here
+        console.log("Cancel booking", data);
+        axios
+          .post(`${HOST}/room/${item._id}/cancel`, data)
+          .then((res) => console.log("answer: ${res})"));
+
         Swal.fire("Cancelled!", "Your booking has been cancelled.", "success");
       }
     });
@@ -48,8 +65,12 @@ const MyBooking = () => {
         comment,
         timestamp: new Date().toISOString(),
       };
-      await axios.post(`http://localhost:9000/addReview/${room._id}`, newReview);
-      Swal.fire("Review Submitted!", "Your review has been submitted.", "success");
+      await axios.post(`${HOST}/addReview/${room._id}`, newReview);
+      Swal.fire(
+        "Review Submitted!",
+        "Your review has been submitted.",
+        "success"
+      );
       modal.close();
     };
   };
@@ -117,14 +138,34 @@ const MyBooking = () => {
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg">Review for Room</h3>
           <label>Username:</label>
-          <input type="text" id="username" value={user.email} readOnly className="input input-bordered w-full mb-2" />
+          <input
+            type="text"
+            id="username"
+            value={user.email}
+            readOnly
+            className="input input-bordered w-full mb-2"
+          />
           <label>Rating:</label>
-          <input type="number" id="rating" className="input input-bordered w-full mb-2" min="1" max="5" />
+          <input
+            type="number"
+            id="rating"
+            className="input input-bordered w-full mb-2"
+            min="1"
+            max="5"
+          />
           <label>Comment:</label>
-          <textarea id="comment" className="textarea textarea-bordered w-full mb-2"></textarea>
+          <textarea
+            id="comment"
+            className="textarea textarea-bordered w-full mb-2"></textarea>
           <div className="modal-action">
-            <button id="submit-review" className="btn">Submit</button>
-            <button className="btn" onClick={() => document.getElementById("review-modal").close()}>Close</button>
+            <button id="submit-review" className="btn">
+              Submit
+            </button>
+            <button
+              className="btn"
+              onClick={() => document.getElementById("review-modal").close()}>
+              Close
+            </button>
           </div>
         </form>
       </dialog>
