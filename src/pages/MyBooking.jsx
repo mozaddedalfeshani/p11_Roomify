@@ -27,10 +27,10 @@ const MyBooking = () => {
 
   useEffect(() => {
     fetchData();
-  }, [user.email, data]);
+  }, [user.email]); // Removed 'data' from dependency array
 
   const handleCancel = async (item) => {
-    console.log(item);
+
     const data = {
       booked: false,
       bookedBy: "",
@@ -52,7 +52,7 @@ const MyBooking = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         // Perform cancellation logic here
-        console.log("Cancel booking", data);
+
         try {
           await axios.post(`${HOST}/room/${item._id}/cancel`, data);
           Swal.fire(
@@ -92,15 +92,10 @@ const MyBooking = () => {
       roomId: selectedRoom._id,
     };
     try {
-      console.log("Review submitted:", reviewData);
-      console.log("Name:", user.displayName);
-      console.log("Rating:", rating);
-      console.log("Review Text:", comment);
-      console.log("Time Stamp:", new Date().toISOString());
+
 
       axios
-        .post(`${HOST}/rooms/${selectedRoom._id}/review`, reviewData)
-        .then((res) => console.log(res.data));
+        .post(`${HOST}/rooms/${selectedRoom._id}/review`, reviewData);
       Swal.fire(
         "Success!",
         "Your review has been submitted successfully.",
@@ -148,7 +143,7 @@ const MyBooking = () => {
       _id: item._id,
       bookingDate: selected.toLocaleDateString(),
     };
-    console.log("Updated booking data:", data);
+
     document.getElementById("my_modal_5").close();
   };
   const today = new Date();
@@ -159,51 +154,42 @@ const MyBooking = () => {
         {data.length === 0 ? (
           <p className="text-center py-4">You haven't booked any rooms yet.</p>
         ) : (
-          <table className="min-w-full">
-            <thead>
-              <tr>
-                <th className="py-2 text-center">Image</th>
-                <th className="py-2 text-center">Name</th>
-                <th className="py-2 text-center">Price</th>
-                <th className="py-2 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item) => (
-                <tr
-                  key={item._id}
-                  className={`border-l-4 ${getBorderColor(item.status)}`}>
-                  <td className="py-2 text-center">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover mx-auto"
-                    />
-                  </td>
-                  <td className="py-2 text-center">{item.name}</td>
-                  <td className="py-2 text-center">${item.price}</td>
-                  <td className="py-2 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            {data.map((item) => (
+              <div
+                key={item._id}
+                className={`card border-l-4 ${getBorderColor(
+                  item.status
+                )} shadow-md`}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h2 className="text-xl font-bold">{item.name}</h2>
+                  <p className="text-gray-600">${item.price}</p>
+                  <div className="flex justify-between mt-4">
                     <button
                       onClick={() => handleCancel(item)}
-                      className="px-4 btn btn-outline py-2 rounded">
+                      className="btn btn-outline">
                       Cancel
                     </button>
                     <button
                       onClick={() => handleAddReview(item)}
-                      className="px-4 btn btn-outline py-2 rounded ml-2">
+                      className="btn btn-outline ml-2">
                       Add Review
                     </button>
-
                     <button
                       onClick={() => handleUpdateDate(setTemp(item))}
-                      className="px-4 btn btn-outline py-2 rounded ml-2">
+                      className="btn btn-outline ml-2">
                       Update Date
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
       <dialog id="review_modal" className="modal modal-bottom sm:modal-middle">

@@ -22,7 +22,7 @@ const RoomDetails = () => {
       axios.get(`${HOST}/room/${id}`).then((res) => {
         setRoom(res.data);
         setReviews(res.data.reviews || []);
-        console.log("Room data:", res.data);
+
       });
     };
 
@@ -45,9 +45,9 @@ const RoomDetails = () => {
       await axios
         .post(`${HOST}/room/${room._id}/book`, bookingData)
         .then((res) => {
-          console.log("Booking axios data:", res.data);
+
         });
-      console.log("Room booked:", bookingData);
+
 
       Swal.fire("Success!", "Your room has been booked.", "success");
 
@@ -56,7 +56,7 @@ const RoomDetails = () => {
         axios.get(`${HOST}/room/${id}`).then((res) => {
           setRoom(res.data);
           setReviews(res.data.reviews || []);
-          console.log("Updated room data:", res.data);
+
         });
       }, 500); // Small delay to ensure consistency
     } catch (error) {
