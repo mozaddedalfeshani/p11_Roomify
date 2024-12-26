@@ -10,6 +10,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import app from "../firebase/firebase.init";
+import axios from "axios";
+import { HOST } from "../host";
 
 const provider = new GoogleAuthProvider();
 const auth = getAuth(app);
@@ -40,18 +42,28 @@ const AuthProvider = ({ children }) => {
     };
   }, [auth]);
 
+  // function to set JWT cookies
+  const setJwtCookie = async (email) => {
+    try {
+      await axios.post(`${HOST}/jwt`, { email }, { withCredentials: true });
+    } catch (error) {
+      console.error("Error setting JWT cookie:", error);
+    }
+  };
+
   // function to sign in with Google
   const googleSignIn = async () => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
-      setUser(result.user);
+      await setJwtCookie(result.user.email); // Set JWT cookie after Google sign-in
+      setUser(result.user); // Manually update the user state
       return result.user; // Return the user data
     } catch (error) {
       console.error("Error during Google sign-in:", error);
       throw error; // Rethrow the error to be handled by the caller
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading to false only after JWT cookie is set
     }
   };
 

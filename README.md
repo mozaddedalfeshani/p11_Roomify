@@ -147,3 +147,14 @@ roomify/
 ## 🙌 Contributing
 
 Contributions are welcome! Feel free to fork the repository and submit pull requests.
+
+## ❓ FAQ
+
+### What is Roomify?
+Roomify is a modern hotel booking platform that allows users to search, book, and manage hotel reservations with ease.
+
+### How do I book a hotel?
+You can book a hotel by searching for available hotels, selecting your preferred hotel, and completing the booking form.
+
+### Can I manage my bookings?
+Yes, you can manage your bookings through the 'My Bookings' section after logging into your account.
