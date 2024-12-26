@@ -3,7 +3,9 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../provider/AuthProvider";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
+import axios from "axios";
+import { HOST } from "../host";
 
 const LoginPage = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -93,7 +95,7 @@ const LoginPage = () => {
       Swal.fire({
         title: "Signup successful!",
         text: "You have successfully signed up.",
-        icon: "success"
+        icon: "success",
       });
       navigate(from);
     } catch (error) {
@@ -101,7 +103,7 @@ const LoginPage = () => {
       Swal.fire({
         title: "Signup error",
         text: error.message,
-        icon: "error"
+        icon: "error",
       });
     }
   };
@@ -109,14 +111,27 @@ const LoginPage = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signInUser(formFields.email, formFields.password);
+      await signInUser(formFields.email, formFields.password).then((res) => {
+        console.log(res);
+        const userEmail = res.email;
+        console.log(userEmail);
+        axios.post(`${HOST}/jwt`, userEmail).then((res) => {
+          console.log(res);
+        });
+      });
+      Swal.fire({
+        title: "Login successful!",
+        text: "You have successfully logged in.",
+        icon: "success",
+      });
+
       navigate(from);
     } catch (error) {
       console.error("Login failed:", error);
       Swal.fire({
         title: "Login failed",
         text: error.message,
-        icon: "error"
+        icon: "error",
       });
     }
   };

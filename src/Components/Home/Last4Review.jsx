@@ -6,7 +6,7 @@ import { HOST } from "../../host";
 const Last4Review = () => {
   const [review, setReview] = React.useState([]);
   React.useEffect(() => {
-    const fetchdata = axios.get(`${HOST}/last-4-reviews`).then((res) => {
+    axios.get(`${HOST}/last-4-reviews`).then((res) => {
       setReview(res.data);
     });
   }, []);
