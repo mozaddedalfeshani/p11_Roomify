@@ -4,8 +4,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { AuthContext } from "../provider/AuthProvider";
 import Swal from "sweetalert2";
-import axios from "axios";
-import { HOST } from "../host";
 
 const LoginPage = () => {
   const [isSignup, setIsSignup] = useState(false);
@@ -83,38 +81,6 @@ const LoginPage = () => {
     }
   };
 
-  // const handleSignupSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await createAccount(
-  //       formFields.email,
-  //       formFields.password,
-  //       formFields.name,
-  //       formFields.photoUrl
-  //     );
-  //     Swal.fire({
-  //       title: "Signup successful!",
-  //       text: "You have successfully signed up.",
-  //       icon: "success",
-  //     });
-  //     const userEmail = formFields.email;
-  //     axios
-  //       .post(`${HOST}/jwt`, userEmail, {
-  //         withCredentials: true,
-  //       })
-  //       .then((res) => {
-  //         console.log(res);
-  //       });
-  //     navigate(from);
-  //   } catch (error) {
-  //     console.error("Signup error:", error);
-  //     Swal.fire({
-  //       title: "Signup error",
-  //       text: error.message,
-  //       icon: "error",
-  //     });
-  //   }
-  // };
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -124,22 +90,11 @@ const LoginPage = () => {
         formFields.name,
         formFields.photoUrl
       );
-
       Swal.fire({
         title: "Signup successful!",
         text: "You have successfully signed up.",
         icon: "success",
       });
-
-      const userEmail = { email: formFields.email }; // Wrap in object
-      axios
-        .post(`${HOST}/jwt`, userEmail, {
-          withCredentials: true,
-        })
-        .then((res) => {
-          console.log("JWT response:", res.data);
-        });
-
       navigate(from);
     } catch (error) {
       console.error("Signup error:", error);
@@ -151,58 +106,15 @@ const LoginPage = () => {
     }
   };
 
-  // const handleLoginSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     await signInUser(formFields.email, formFields.password).then((res) => {
-  //       console.log(res);
-  //       const userEmail = res.email;
-  //       console.log(userEmail);
-  //       /////////////////////////////////////////////////////////////////
-  //       axios
-  //         .post(`${HOST}/jwt`, userEmail, {
-  //           withCredentials: true,
-  //         })
-  //         .then((res) => {
-  //           console.log(res);
-  //         });
-  //     });
-  //     Swal.fire({
-  //       title: "Login successful!",
-  //       text: "You have successfully logged in.",
-  //       icon: "success",
-  //     });
-
-  //     navigate(from);
-  //   } catch (error) {
-  //     console.error("Login failed:", error);
-  //     Swal.fire({
-  //       title: "Login failed",
-  //       text: error.message,
-  //       icon: "error",
-  //     });
-  //   }
-  // };
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await signInUser(formFields.email, formFields.password);
-
-      const userEmail = { email: response.user.email }; // Wrap in object
-      axios
-        .post(`${HOST}/jwt`, userEmail, {
-          withCredentials: true,
-        })
-        .then((res) => {
-          console.log("JWT response:", res.data);
-        });
-
+      await signInUser(formFields.email, formFields.password);
       Swal.fire({
         title: "Login successful!",
         text: "You have successfully logged in.",
         icon: "success",
       });
-
       navigate(from);
     } catch (error) {
       console.error("Login failed:", error);

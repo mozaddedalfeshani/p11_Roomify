@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import Swal from "sweetalert2";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import "leaflet/dist/leaflet.css";
@@ -18,37 +17,61 @@ const imageUrls = [
 ];
 
 const HomePage = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [randomImageUrl, setRandomImageUrl] = useState("");
+
   useEffect(() => {
     const isFirstVisit = localStorage.getItem("isFirstVisit");
     if (!isFirstVisit) {
       const randomImageUrl =
         imageUrls[Math.floor(Math.random() * imageUrls.length)];
-      Swal.fire({
-        title: "Special Offers and Promotions",
-        text: "Check out our latest discounts and promotions! Don't forget our collection of rooms.",
-        imageUrl: randomImageUrl,
-        imageWidth: 600,
-        imageHeight: 300,
-        imageAlt: "Special Offers",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#3085d6",
-        showCancelButton: false,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.setItem("isFirstVisit", "true");
-        }
-      });
+      setRandomImageUrl(randomImageUrl);
+      setShowModal(true);
     }
   }, []);
 
+  const handleCloseModal = () => {
+    localStorage.setItem("isFirstVisit", "false");
+    setShowModal(false);
+  };
+
   return (
     <div>
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-[1000] bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-3xl w-full">
+            <div
+              className="hero min-h-[80vh] flex items-center justify-center"
+              style={{
+                backgroundImage: `url(${randomImageUrl})`,
+              }}>
+              <div className="hero-overlay bg-opacity-60"></div>
+              <div className="hero-content text-center text-neutral-content">
+                <div className="max-w-md">
+                  <h1 className="mb-5 text-5xl font-bold">
+                    Special Offers and Promotions
+                  </h1>
+                  <p className="mb-5">
+                    Check out our latest discounts and promotions! Don't forget
+                    our collection of rooms.
+                  </p>
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleCloseModal}>
+                    Get Started
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Banner Slider */}
       <CoverflowSlider />
       {/* Map Section */}
       <div>
         <h1 className="text-3xl font-bold text-center my-6">Explore Nearby</h1>
-        <div className="h-[500px] my-5 rounded-xl ">
+        <div className="h-[500px] my-5 rounded-xl   z-0">
           <Map />
         </div>
       </div>
