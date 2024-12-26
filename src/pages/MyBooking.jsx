@@ -19,7 +19,7 @@ const MyBooking = () => {
   const [temp, setTemp] = useState(null);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isTableView, setIsTableView] = useState(true); // State to toggle view
-
+  const todayDate = new Date();
   const fetchData = async () => {
     try {
       const res = await axios.get(`${HOST}/roomEmail/${user.email}`);
@@ -45,6 +45,20 @@ const MyBooking = () => {
   }, [user.email]); // Removed 'data' from dependency array
 
   const handleCancel = async (item) => {
+    const bookingDate = new Date(item.bookingDate);
+    const today = new Date();
+    const oneDayBeforeBooking = new Date(bookingDate);
+    oneDayBeforeBooking.setDate(bookingDate.getDate() - 1);
+
+    if (today > oneDayBeforeBooking) {
+      Swal.fire(
+        "Error!",
+        "You can only cancel the booking at least one day before the booked date.",
+        "error"
+      );
+      return;
+    }
+
     const data = {
       booked: false,
       bookedBy: "",

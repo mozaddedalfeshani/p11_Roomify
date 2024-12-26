@@ -9,6 +9,7 @@ import FeaturedRoom from "../Components/Home/FeaturedRoom";
 import WhyChooseUs from "../Components/Home/WhyChooseUs";
 import AboutUs from "../Components/Home/AboutUs";
 import Footer from "../Components/shared/Footer";
+import Last4Review from "../Components/Home/Last4Review";
 
 const imageUrls = [
   "https://image-tc.galaxy.tf/wijpeg-k4h6gvovqe0bbfizq35w2w5s/deluxe-king-1920-x-1080.jpg",
@@ -53,6 +54,8 @@ const HomePage = () => {
 
       {/* Fetured Rooms */}
       <FeaturedRoom />
+      {/* The latest 4 view  */}
+      <Last4Review />
       {/* why choose us */}
       <WhyChooseUs />
 
