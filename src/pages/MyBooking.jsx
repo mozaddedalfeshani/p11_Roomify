@@ -23,7 +23,7 @@ const MyBooking = () => {
   const fetchData = async () => {
     try {
       const res = await axios.get(`${HOST}/roomEmail/${user.email}`, {
-        withCredentials: true,
+        withCredentials: true, // Changed to true
       });
       const sortedData = res.data.map((room) => ({
         ...room,

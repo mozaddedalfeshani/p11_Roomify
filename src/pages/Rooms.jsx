@@ -24,9 +24,7 @@ const Rooms = () => {
     setSortOrder(e.target.value);
     if (e.target.value) {
       const sortedRooms = [...rooms].sort((a, b) => {
-        return e.target.value === "asc"
-          ? a.rating - b.rating
-          : b.rating - a.rating;
+        return e.target.value === "asc" ? a.price - b.price : b.price - a.price;
       });
       setRooms(sortedRooms);
     }
@@ -36,7 +34,7 @@ const Rooms = () => {
     <div className="flex flex-col my-5 items-center justify-center container mx-auto">
       <h1 className="text-3xl font-bold my-2">All Rooms</h1>
       <div className="w-full flex flex-col sm:flex-row justify-between mb-4">
-        <span className="label-text mb-2 sm:mb-0">Sort by Rating:</span>
+        <span className="label-text mb-2 sm:mb-0">Sort by Price:</span>
         <div className="form-control w-full sm:w-auto max-w-xs">
           <select
             id="sort"
@@ -44,8 +42,8 @@ const Rooms = () => {
             onChange={handleSortChange}
             className="select select-bordered">
             <option value="">Select</option>
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
+            <option value="asc">low to high</option>
+            <option value="desc">High to low</option>
           </select>
         </div>
       </div>
