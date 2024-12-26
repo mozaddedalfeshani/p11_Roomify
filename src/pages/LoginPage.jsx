@@ -57,6 +57,14 @@ const LoginPage = () => {
     try {
       await googleSignIn();
       if (user) {
+        const userEmail = user.email;
+        axios
+          .post(`${HOST}/jwt`, userEmail, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            console.log(res);
+          });
         navigate(from);
       }
     } catch (error) {
@@ -97,6 +105,14 @@ const LoginPage = () => {
         text: "You have successfully signed up.",
         icon: "success",
       });
+      const userEmail = formFields.email;
+      axios
+        .post(`${HOST}/jwt`, userEmail, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          console.log(res);
+        });
       navigate(from);
     } catch (error) {
       console.error("Signup error:", error);
@@ -115,6 +131,7 @@ const LoginPage = () => {
         console.log(res);
         const userEmail = res.email;
         console.log(userEmail);
+        /////////////////////////////////////////////////////////////////
         axios
           .post(`${HOST}/jwt`, userEmail, {
             withCredentials: true,

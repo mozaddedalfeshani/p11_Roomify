@@ -29,9 +29,13 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user); // Set the user state when authentication state changes
+      // call /jwt for set cookie again
+
       setLoading(false); // Set loading to false when authentication state is determined
     });
     return () => {
+      // set cookie again when user is logged in
+
       unsubscribe(); // Cleanup the subscription on component unmount
     };
   }, [auth]);
