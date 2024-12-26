@@ -22,7 +22,9 @@ const MyBooking = () => {
   const todayDate = new Date();
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${HOST}/roomEmail/${user.email}`);
+      const res = await axios.get(`${HOST}/roomEmail/${user.email}`, {
+        withCredentials: true,
+      });
       const sortedData = res.data.map((room) => ({
         ...room,
         reviews: room.reviews.sort(

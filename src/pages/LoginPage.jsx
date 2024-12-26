@@ -115,9 +115,13 @@ const LoginPage = () => {
         console.log(res);
         const userEmail = res.email;
         console.log(userEmail);
-        axios.post(`${HOST}/jwt`, userEmail).then((res) => {
-          console.log(res);
-        });
+        axios
+          .post(`${HOST}/jwt`, userEmail, {
+            withCredentials: true,
+          })
+          .then((res) => {
+            console.log(res);
+          });
       });
       Swal.fire({
         title: "Login successful!",
