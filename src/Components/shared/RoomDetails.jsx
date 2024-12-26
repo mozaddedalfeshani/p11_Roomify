@@ -8,6 +8,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import { HOST } from "../../host";
 import { Link } from "react-router-dom";
+
 const RoomDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const RoomDetails = () => {
   const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selected, setSelected] = useState();
+
+  const today = new Date(); // Move this line to the top of the component
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -33,7 +36,16 @@ const RoomDetails = () => {
   const handleBookNow = () => {
     setIsModalOpen(true);
   };
+
   const handleConfirmBooking = async () => {
+    if (selected && selected.setHours(0,0,0,0) < today.setHours(0,0,0,0)) {
+      Swal.fire(
+        "Error!",
+        "Please select a future date or today's date.",
+        "error"
+      );
+      return;
+    }
     const bookingData = {
       bookingDate: selected
         ? selected.toLocaleDateString()
@@ -73,8 +85,6 @@ const RoomDetails = () => {
 
     setIsModalOpen(false);
   };
-
-  const today = new Date();
 
   if (!room) {
     return (
