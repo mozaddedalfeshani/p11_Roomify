@@ -53,10 +53,20 @@ const LoginPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const requestJwtToken = async (email) => {
+    try {
+      const response = await axios.post(`${HOST}/jwt`, { email }, { withCredentials: true });
+      console.log(response);
+    } catch (error) {
+      console.error("JWT token request error:", error);
+    }
+  };
+
   const handleGoogleSign = async () => {
     try {
-      await googleSignIn();
+      const user = await googleSignIn();
       if (user) {
+        await requestJwtToken(user.email);
         navigate(from);
       }
     } catch (error) {
@@ -92,6 +102,7 @@ const LoginPage = () => {
         formFields.name,
         formFields.photoUrl
       );
+      await requestJwtToken(formFields.email);
       Swal.fire({
         title: "Signup successful!",
         text: "You have successfully signed up.",
@@ -111,24 +122,14 @@ const LoginPage = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signInUser(formFields.email, formFields.password).then((res) => {
-        console.log(res);
-        const userEmail = res.email;
-        console.log(userEmail);
-        axios
-          .post(`${HOST}/jwt`, userEmail, {
-            withCredentials: true,
-          })
-          .then((res) => {
-            console.log(res);
-          });
-      });
+      const res = await signInUser(formFields.email, formFields.password);
+      console.log(res);
+      await requestJwtToken(res.email);
       Swal.fire({
         title: "Login successful!",
         text: "You have successfully logged in.",
         icon: "success",
       });
-
       navigate(from);
     } catch (error) {
       console.error("Login failed:", error);
